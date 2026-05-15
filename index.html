@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#213f63">
+  <title>Inventario de Libros</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="hero-brand">
+        <div class="hero-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M14 12h25c6 0 11 5 11 11v29H24c-6 0-10-4-10-10V12Z" fill="#f7c948"/>
+            <path d="M20 12h24c4 0 6 2 6 6v34H25c-6 0-11-5-11-11V18c0-3 3-6 6-6Z" fill="#ffffff"/>
+            <path d="M20 12h24c4 0 6 2 6 6v34H25c-6 0-11-5-11-11V18c0-3 3-6 6-6Z" fill="none" stroke="#16324f" stroke-width="4"/>
+            <path d="M22 24h20M22 33h20M22 42h14" stroke="#2f6f7e" stroke-width="4" stroke-linecap="round"/>
+            <path d="M14 18c0-3 3-6 6-6h5v40h-5c-3 0-6-3-6-6V18Z" fill="#2f6f7e"/>
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">Biblioteca comercial</p>
+          <h1>Inventario de Libros</h1>
+        </div>
+      </div>
+    </header>
+
+    <section class="summary-grid" aria-label="Resumen rapido">
+      <article>
+        <span>Titulos</span>
+        <strong id="quickTitles">0</strong>
+      </article>
+      <article>
+        <span>Stock total</span>
+        <strong id="quickStock">0</strong>
+      </article>
+      <article>
+        <span>Valor stock</span>
+        <strong id="quickValue">$0</strong>
+      </article>
+    </section>
+
+    <section class="view active" id="inventoryView">
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2>Inventario</h2>
+            <p>Lista de libros disponibles</p>
+          </div>
+          <input class="search" id="searchInput" type="search" placeholder="Buscar libro o autor">
+        </div>
+        <div class="book-list" id="bookList"></div>
+      </section>
+    </section>
+
+    <section class="view" id="createView">
+      <form class="card form" id="bookForm">
+        <div class="card-head">
+          <div>
+            <h2>Crear libro</h2>
+            <p>Agrega un producto al inventario</p>
+          </div>
+        </div>
+        <label>Nombre
+          <input id="bookName" autocomplete="off" required placeholder="Ej: Cien anos de soledad">
+        </label>
+        <label>Autor
+          <input id="bookAuthor" autocomplete="off" required placeholder="Ej: Gabriel Garcia Marquez">
+        </label>
+        <label>Cantidad de paginas
+          <input id="bookPages" type="number" min="1" step="1" inputmode="numeric" required placeholder="Ej: 471">
+        </label>
+        <label>Precio de venta
+          <input id="bookPrice" type="number" min="1" step="1" inputmode="numeric" required placeholder="Ej: 12990">
+        </label>
+        <label>Cantidad en stock
+          <input id="bookStock" type="number" min="0" step="1" inputmode="numeric" required placeholder="Ej: 8">
+        </label>
+        <div class="preview-row">
+          <span>Valor de este stock</span>
+          <strong id="createPreview">$0</strong>
+        </div>
+        <button class="primary" type="submit">Guardar libro</button>
+      </form>
+    </section>
+
+    <section class="view" id="summaryView">
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2>Resumen</h2>
+            <p>Lectura rapida del negocio</p>
+          </div>
+        </div>
+        <div class="report-grid">
+          <article>
+            <span>Libros distintos</span>
+            <strong id="summaryTitles">0</strong>
+          </article>
+          <article>
+            <span>Unidades para vender</span>
+            <strong id="summaryUnits">0</strong>
+          </article>
+          <article>
+            <span>Capital en vitrinas</span>
+            <strong id="summaryValue">$0</strong>
+          </article>
+          <article>
+            <span>Paginas acumuladas</span>
+            <strong id="summaryPages">0</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2>Ideas del inventario</h2>
+            <p>Datos inventados pero utiles</p>
+          </div>
+        </div>
+        <div class="insights" id="insights"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2>Top stock</h2>
+            <p>Los libros con mas unidades</p>
+          </div>
+        </div>
+        <div class="stock-bars" id="stockBars"></div>
+      </section>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navegacion">
+    <button class="active" type="button" data-tab="inventory">Inventario</button>
+    <button type="button" data-tab="create">Crear libro</button>
+    <button type="button" data-tab="summary">Resumen</button>
+  </nav>
+
+  <div class="modal" id="passwordModal" aria-hidden="true">
+    <form class="modal-panel" id="passwordForm">
+      <h2>Clave requerida</h2>
+      <p>Ingresa la clave para modificar este libro.</p>
+      <input id="passwordInput" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Clave" required>
+      <div class="modal-actions">
+        <button class="secondary" type="button" id="cancelPasswordBtn">Cancelar</button>
+        <button class="primary" type="submit">Continuar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="editModal" aria-hidden="true">
+    <form class="modal-panel form" id="editForm">
+      <h2>Modificar libro</h2>
+      <label>Nombre
+        <input id="editName" required>
+      </label>
+      <label>Autor
+        <input id="editAuthor" required>
+      </label>
+      <label>Cantidad de paginas
+        <input id="editPages" type="number" min="1" step="1" required>
+      </label>
+      <label>Precio de venta
+        <input id="editPrice" type="number" min="1" step="1" required>
+      </label>
+      <label>Cantidad en stock
+        <input id="editStock" type="number" min="0" step="1" required>
+      </label>
+      <div class="modal-actions">
+        <button class="secondary" type="button" id="cancelEditBtn">Cancelar</button>
+        <button class="primary" type="submit">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
