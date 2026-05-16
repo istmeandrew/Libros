@@ -69,6 +69,9 @@
         <label>Autor
           <input id="bookAuthor" autocomplete="off" required placeholder="Ej: Gabriel Garcia Marquez">
         </label>
+        <label>Cliente asignado
+          <input id="bookClient" autocomplete="off" list="clientOptions" placeholder="Opcional: nombre del cliente">
+        </label>
         <label>Cantidad de paginas
           <input id="bookPages" type="number" min="1" step="1" inputmode="numeric" required placeholder="Ej: 471">
         </label>
@@ -163,6 +166,9 @@
       <label>Autor
         <input id="editAuthor" required>
       </label>
+      <label>Cliente asignado
+        <input id="editClient" list="clientOptions" placeholder="Sin cliente asignado">
+      </label>
       <label>Cantidad de paginas
         <input id="editPages" type="number" min="1" step="1" required>
       </label>
@@ -179,6 +185,7 @@
     </form>
   </div>
 
+  <datalist id="clientOptions"></datalist>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>
