@@ -65,6 +65,10 @@ function bookValue(book) {
   return (Number(book.price) || 0) * (Number(book.stock) || 0);
 }
 
+function clientName(book) {
+  return String(book.client || "").trim();
+}
+
 function totals() {
   return state.books.reduce((acc, book) => {
     acc.titles += 1;
@@ -93,25 +97,26 @@ function filteredBooks() {
   const query = $("#searchInput").value.trim().toLowerCase();
   if (!query) return state.books;
   return state.books.filter((book) => {
-    return book.name.toLowerCase().includes(query) || book.author.toLowerCase().includes(query);
+    return book.name.toLowerCase().includes(query)
+      || book.author.toLowerCase().includes(query)
+      || clientName(book).toLowerCase().includes(query);
   });
 }
 
-function renderInventory() {
-  const books = filteredBooks().slice().sort((a, b) => a.name.localeCompare(b.name, "es"));
-  const list = $("#bookList");
-
+function renderBookItems(books) {
   if (!books.length) {
-    list.innerHTML = `<div class="empty">No hay libros para mostrar.</div>`;
-    return;
+    return `<div class="empty">No hay libros para mostrar.</div>`;
   }
 
-  list.innerHTML = books.map((book) => `
+  return books.map((book) => {
+    const client = clientName(book);
+    return `
     <article class="book-item">
       <div class="book-top">
         <div class="book-title">
           <strong>${escapeHtml(book.name)}</strong>
           <span class="book-sub">${escapeHtml(book.author)}</span>
+          ${client ? `<span class="client-pill">Cliente: ${escapeHtml(client)}</span>` : `<span class="client-pill neutral">Sin cliente</span>`}
         </div>
       </div>
       <div class="book-details">
@@ -137,7 +142,43 @@ function renderInventory() {
         <button class="danger" type="button" data-action="delete" data-id="${book.id}">Eliminar</button>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
+}
+
+function renderInventory() {
+  const books = filteredBooks().slice().sort((a, b) => a.name.localeCompare(b.name, "es"));
+  const list = $("#bookList");
+
+  if (!books.length) {
+    list.innerHTML = `<div class="empty">No hay libros para mostrar.</div>`;
+    return;
+  }
+
+  const availableBooks = books.filter((book) => !clientName(book));
+  const assignedBooks = books.filter((book) => clientName(book));
+  list.innerHTML = `
+    <section class="inventory-group">
+      <div class="group-head">
+        <h3>Sin cliente asignado</h3>
+        <span>${number(availableBooks.length)} libro(s)</span>
+      </div>
+      ${renderBookItems(availableBooks)}
+    </section>
+    <section class="inventory-group">
+      <div class="group-head">
+        <h3>Asignados a clientes</h3>
+        <span>${number(assignedBooks.length)} libro(s)</span>
+      </div>
+      ${renderBookItems(assignedBooks)}
+    </section>
+  `;
+}
+
+function renderClientOptions() {
+  const clients = Array.from(new Set(state.books.map(clientName).filter(Boolean)))
+    .sort((a, b) => a.localeCompare(b, "es"));
+  $("#clientOptions").innerHTML = clients.map((client) => `<option value="${escapeHtml(client)}"></option>`).join("");
 }
 
 function renderSummary() {
@@ -195,6 +236,7 @@ function renderSummary() {
 }
 
 function render() {
+  renderClientOptions();
   renderQuickSummary();
   renderInventory();
   renderSummary();
@@ -217,6 +259,7 @@ function addBook(event) {
     id: uid(),
     name: $("#bookName").value.trim(),
     author: $("#bookAuthor").value.trim(),
+    client: $("#bookClient").value.trim(),
     pages: Number($("#bookPages").value) || 0,
     price: Number($("#bookPrice").value) || 0,
     stock: Number($("#bookStock").value) || 0,
@@ -268,6 +311,7 @@ function openEdit(id) {
   editingId = id;
   $("#editName").value = book.name;
   $("#editAuthor").value = book.author;
+  $("#editClient").value = clientName(book);
   $("#editPages").value = book.pages;
   $("#editPrice").value = book.price;
   $("#editStock").value = book.stock;
@@ -314,6 +358,7 @@ function saveEdit(event) {
     ...book,
     name: $("#editName").value.trim(),
     author: $("#editAuthor").value.trim(),
+    client: $("#editClient").value.trim(),
     pages: Number($("#editPages").value) || 0,
     price: Number($("#editPrice").value) || 0,
     stock: Number($("#editStock").value) || 0,
