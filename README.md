@@ -3,7 +3,8 @@
 Aplicacion estatica para administrar libros en inventario.
 
 - Inventario con nombre, autor, paginas, precio, stock y valor.
-- Crear libro con formulario.
+- Crear libro con formulario y cliente asignado opcional.
+- Inventario separado visualmente entre libros sin cliente y libros asignados a clientes.
 - Modificar o eliminar libros con clave.
 - Resumen con valor total, stock, paginas acumuladas e ideas del inventario.
 
