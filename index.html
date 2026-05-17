@@ -25,6 +25,12 @@
           <h1>Inventario de Libros</h1>
         </div>
       </div>
+      <div class="hero-actions">
+        <button class="icon-button" id="exportBtn" type="button" title="Guardar respaldo">Guardar</button>
+        <label class="icon-button file-button" title="Importar respaldo">Importar
+          <input id="importFile" type="file" accept="application/json">
+        </label>
+      </div>
     </header>
 
     <section class="summary-grid" aria-label="Resumen rapido">
@@ -49,7 +55,7 @@
             <h2>Inventario</h2>
             <p>Lista de libros disponibles</p>
           </div>
-          <input class="search" id="searchInput" type="search" placeholder="Buscar libro o autor">
+          <input class="search" id="searchInput" type="search" placeholder="Buscar libro, autor, cliente o telefono">
         </div>
         <div class="book-list" id="bookList"></div>
       </section>
@@ -67,10 +73,13 @@
           <input id="bookName" autocomplete="off" required placeholder="Ej: Cien anos de soledad">
         </label>
         <label>Autor
-          <input id="bookAuthor" autocomplete="off" required placeholder="Ej: Gabriel Garcia Marquez">
+          <input id="bookAuthor" autocomplete="off" placeholder="Opcional: Gabriel Garcia Marquez">
         </label>
-        <label>Cliente asignado
-          <input id="bookClient" autocomplete="off" list="clientOptions" placeholder="Opcional: nombre del cliente">
+        <label>Cliente para una unidad
+          <input id="bookClient" autocomplete="off" list="clientOptions" placeholder="Opcional: asigna solo 1 unidad">
+        </label>
+        <label>Telefono del cliente
+          <input id="bookPhone" autocomplete="off" type="tel" inputmode="tel" placeholder="Opcional: telefono o WhatsApp">
         </label>
         <label>Cantidad de paginas
           <input id="bookPages" type="number" min="1" step="1" inputmode="numeric" required placeholder="Ej: 471">
@@ -87,6 +96,42 @@
         </div>
         <button class="primary" type="submit">Guardar libro</button>
       </form>
+    </section>
+
+    <section class="view" id="sellView">
+      <form class="card form" id="saleForm">
+        <div class="card-head">
+          <div>
+            <h2>Vender</h2>
+            <p>Descuenta unidades del inventario</p>
+          </div>
+        </div>
+        <label>Libro
+          <select id="saleBook" required></select>
+        </label>
+        <div class="preview-row">
+          <span>Cliente asignado</span>
+          <strong id="saleClientHint">Sin cliente</strong>
+        </div>
+        <label>Cantidad
+          <input id="saleQty" type="number" min="1" step="1" inputmode="numeric" required placeholder="Ej: 1">
+        </label>
+        <div class="preview-row">
+          <span>Total venta</span>
+          <strong id="salePreview">$0</strong>
+        </div>
+        <button class="primary" type="submit">Registrar venta</button>
+      </form>
+
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2>Ultimas ventas</h2>
+            <p>Movimientos recientes</p>
+          </div>
+        </div>
+        <div class="book-list" id="recentSales"></div>
+      </section>
     </section>
 
     <section class="view" id="summaryView">
@@ -142,6 +187,7 @@
   <nav class="bottom-nav" aria-label="Navegacion">
     <button class="active" type="button" data-tab="inventory">Inventario</button>
     <button type="button" data-tab="create">Crear libro</button>
+    <button type="button" data-tab="sell">Vender</button>
     <button type="button" data-tab="summary">Resumen</button>
   </nav>
 
@@ -164,10 +210,13 @@
         <input id="editName" required>
       </label>
       <label>Autor
-        <input id="editAuthor" required>
+        <input id="editAuthor" placeholder="Opcional">
       </label>
-      <label>Cliente asignado
+      <label>Cliente de una unidad
         <input id="editClient" list="clientOptions" placeholder="Sin cliente asignado">
+      </label>
+      <label>Telefono del cliente
+        <input id="editPhone" type="tel" inputmode="tel" placeholder="Opcional: telefono o WhatsApp">
       </label>
       <label>Cantidad de paginas
         <input id="editPages" type="number" min="1" step="1" required>
@@ -181,6 +230,26 @@
       <div class="modal-actions">
         <button class="secondary" type="button" id="cancelEditBtn">Cancelar</button>
         <button class="primary" type="submit">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="stockModal" aria-hidden="true">
+    <form class="modal-panel form" id="stockForm">
+      <h2>Agregar unidades</h2>
+      <p id="stockBookName" class="modal-note"></p>
+      <label>Unidades a agregar
+        <input id="stockQty" type="number" min="1" step="1" inputmode="numeric" required placeholder="Ej: 3">
+      </label>
+      <label>Cliente para una unidad
+        <input id="stockClient" list="clientOptions" placeholder="Opcional: asigna solo 1 unidad">
+      </label>
+      <label>Telefono del cliente
+        <input id="stockPhone" type="tel" inputmode="tel" placeholder="Opcional: telefono o WhatsApp">
+      </label>
+      <div class="modal-actions">
+        <button class="secondary" type="button" id="cancelStockBtn">Cancelar</button>
+        <button class="primary" type="submit">Agregar unidades</button>
       </div>
     </form>
   </div>
